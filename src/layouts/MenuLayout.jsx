@@ -3,6 +3,9 @@ import logo from '../assets/Logo-IFRS-cores-sem-fundo-Vertical.png'
 import './MenuLayout.css'
 
 export default function MenuLayout() {
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const isAdmin = (user?.role || '').toUpperCase() === 'ADMIN'
+
   return (
     <div className="menu-layout">
       <header className="menu-header">
@@ -13,6 +16,7 @@ export default function MenuLayout() {
         <NavLink to="/" end>Próxima Refeição</NavLink>
         <NavLink to="/cardapio/dia">Diário</NavLink>
         <NavLink to="/cardapio/semana">Semanal</NavLink>
+        {isAdmin && <NavLink to="/admin">Admin</NavLink>}
       </nav>
       <main className="menu-content">
         <Outlet />

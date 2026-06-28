@@ -1,35 +1,133 @@
-import { MOCK_CARDAPIO } from '../../mocks/cardapio'
+import { useEffect, useState } from 'react'
+import api from '../../services/api'
 
-const DIAS_LABEL = {
-  segunda: 'Segunda-feira',
-  terca: 'Terça-feira',
-  quarta: 'Quarta-feira',
-  quinta: 'Quinta-feira',
-  sexta: 'Sexta-feira',
+function formatarDia(dateValue) {
+  if (!dateValue) return 'Dia'
+
+  const data = new Date(dateValue)
+
+  if (Number.isNaN(data.getTime())) return dateValue
+
+  const nomeDia = data.toLocaleDateString('pt-BR', { weekday: 'long' })
+  return nomeDia.charAt(0).toUpperCase() + nomeDia.slice(1)
 }
 
 export default function CardapioSemana() {
+  const [menus, setMenus] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function carregarCardapios() {
+      try {
+        const { data } = await api.get('/menus/current-week')
+        const resposta = Array.isArray(data) ? data : data?.menus || data?.data || []
+        setMenus(resposta)
+      } catch (err) {
+        const message =
+          err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          'Erro ao carregar o cardápio semanal'
+
+        setError(message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    carregarCardapios()
+  }, [])
+
+  if (loading) {
+    return (
+      <div>
+        <h1>Cardápio Semanal</h1>
+        <p>Carregando...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <h1>Cardápio Semanal</h1>
+        <p>{error}</p>
+      </div>
+    )
+  }
+
+  if (!menus.length) {
+    return (
+      <div>
+        <h1>Cardápio Semanal</h1>
+        <p>Sem cardápio disponível para esta semana.</p>
+      </div>
+    )
+  }
+  
+  const menusPorDia = [...menus]
+    .sort((a, b) => new Date(a?.date || 0) - new Date(b?.date || 0))
+    .reduce((acc, menu) => {
+      const data = menu?.date ? new Date(menu.date) : null
+      const chave = data
+        ? `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`
+        : 'sem-data'
+
+      if (!acc[chave]) {
+        acc[chave] = {
+          label: formatarDia(menu?.date),
+          cafe: [],
+          almoco: [],
+          janta: [],
+        }
+      }
+
+      const tipo = (menu?.type || '').toUpperCase()
+      const items = Array.isArray(menu?.items) ? menu.items : []
+
+      if (tipo === 'JANTAR') {
+        acc[chave].janta.push(...items)
+      } else if (tipo === 'ALMOCO') {
+        acc[chave].almoco.push(...items)
+      } else {
+        acc[chave].cafe.push(...items)
+      }
+
+      return acc
+    }, {})
+
   return (
     <div>
       <h1>Cardápio Semanal</h1>
-      {Object.entries(MOCK_CARDAPIO).map(([dia, refeicoes]) => (
-        <div key={dia} className="dia-semana">
-          <h2>{DIAS_LABEL[dia]}</h2>
+      {Object.entries(menusPorDia).map(([chave, dia], index) => (
+        <div key={`${chave}-${index}`} className="dia-semana">
+          <h2>{dia.label}</h2>
+
+          <h3>Café da manhã</h3>
+          <ul className="cardapio-lista">
+            {dia.cafe.length > 0 ? (
+              dia.cafe.map((item, itemIndex) => <li key={`cafe-${chave}-${itemIndex}`}>{item}</li>)
+            ) : (
+              <li>Sem itens cadastrados.</li>
+            )}
+          </ul>
 
           <h3>Almoço</h3>
           <ul className="cardapio-lista">
-            <li><strong>Principal:</strong> {refeicoes.almoco.principal}</li>
-            <li><strong>Acompanhamento:</strong> {refeicoes.almoco.acompanhamento}</li>
-            <li><strong>Salada:</strong> {refeicoes.almoco.salada}</li>
-            <li><strong>Sobremesa:</strong> {refeicoes.almoco.sobremesa}</li>
+            {dia.almoco.length > 0 ? (
+              dia.almoco.map((item, itemIndex) => <li key={`almoco-${chave}-${itemIndex}`}>{item}</li>)
+            ) : (
+              <li>Sem itens cadastrados.</li>
+            )}
           </ul>
 
           <h3>Janta</h3>
           <ul className="cardapio-lista">
-            <li><strong>Principal:</strong> {refeicoes.janta.principal}</li>
-            <li><strong>Acompanhamento:</strong> {refeicoes.janta.acompanhamento}</li>
-            <li><strong>Salada:</strong> {refeicoes.janta.salada}</li>
-            <li><strong>Sobremesa:</strong> {refeicoes.janta.sobremesa}</li>
+            {dia.janta.length > 0 ? (
+              dia.janta.map((item, itemIndex) => <li key={`janta-${chave}-${itemIndex}`}>{item}</li>)
+            ) : (
+              <li>Sem itens cadastrados.</li>
+            )}
           </ul>
         </div>
       ))}

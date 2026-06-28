@@ -83,6 +83,8 @@ export function getRefeicaoAtual() {
   const hora = new Date().getHours()
   const cardapio = getCardapioHoje()
   if (!cardapio) return null
-  return hora < 14 ? { tipo: 'Almoço', ...cardapio.almoco } : { tipo: 'Janta', ...cardapio.janta }
+  if (hora < 11) return { tipo: 'Café da manhã', ...cardapio.almoco }
+  if (hora >= 11 && hora < 14) return { tipo: 'Almoço', ...cardapio.almoco }
+  if (hora >= 14 && hora < 18) return { tipo: 'Janta', ...cardapio.janta }
 }
 // fim do mock

@@ -1,14 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import logo from '../../assets/Logo-IFRS-cores-sem-fundo-Vertical.png'
+import api from '../../services/api'
 import './Auth.css'
-
-// inicio do mock
-const MOCK_USERS = [
-  { email: 'admin@ifrs.edu.br', password: '123456', name: 'Administrador', role: 'admin' },
-  { email: 'aluno@ifrs.edu.br', password: '123456', name: 'Aluno Teste', role: 'user' },
-]
-// fim do mock
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -16,23 +10,38 @@ export default function Login() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     setError('')
 
-    // inicio do mock
-    const user = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
-    )
+    try {
+      const { data } = await api.post('/auth/login', { email, password })
+      const token = data?.token || data?.accessToken || data?.access_token || data?.jwt
 
-    if (user) {
-      localStorage.setItem('token', 'mock-token-' + user.role)
-      localStorage.setItem('user', JSON.stringify({ name: user.name, email: user.email, role: user.role }))
+      if (!token) {
+        throw new Error('Token não recebido da API')
+      }
+
+      const userData = data?.user || {
+        name: data?.name || email,
+        email,
+        role: data?.role || 'user',
+      }
+
+      localStorage.setItem('@CardapioIFRS:token', token)
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(userData))
+
       navigate('/')
-    } else {
-      setError('Email ou senha inválidos')
+    } catch (err) {
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        'Email ou senha inválidos'
+
+      setError(message)
     }
-    // fim do mock
   }
 
   return (

@@ -63,3 +63,124 @@
   margin: 0 auto;
   box-sizing: border-box;
 }
+
+.admin-dashboard .menu-nav {
+  padding: 0 0 12px;
+  background: transparent;
+  border-bottom: none;
+}
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-dashboard form {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-top: 4px solid #86efac;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-dashboard form div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-dashboard form label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-dashboard form input,
+.admin-dashboard form select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.admin-dashboard form input:focus,
+.admin-dashboard form select:focus {
+  outline: none;
+  border-color: #86efac;
+  box-shadow: 0 0 0 3px rgba(134, 239, 172, 0.3);
+}
+
+.admin-dashboard form button,
+.admin-dashboard .btn-danger {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-dashboard form button {
+  background-color: #86efac;
+  color: #14532d;
+}
+
+.admin-dashboard form button:hover {
+  background-color: #4ade80;
+}
+
+.admin-dashboard .btn-danger {
+  background-color: #fecaca;
+  color: #991b1b;
+  margin-top: 8px;
+}
+
+.admin-dashboard .btn-danger:hover {
+  background-color: #fda4af;
+}
+
+.admin-dashboard .status-success {
+  color: #166534;
+  background-color: #f0fdf4;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.admin-dashboard .status-error {
+  color: #991b1b;
+  background-color: #fef2f2;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.dia-semana {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #86efac;
+}
+
+.dia-semana h3,
+.dia-semana h4 {
+  margin: 8px 0 8px;
+  color: #166534;
+}
+
+.cardapio-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+
+.cardapio-lista li {
+  padding: 6px 0;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.cardapio-lista li:last-child {
+  border-bottom: none;
+}
