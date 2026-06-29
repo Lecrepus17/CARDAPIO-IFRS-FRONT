@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import api from '../../services/api'
 import { useFavoriteMenus } from '../../hooks/useFavoriteMenus'
@@ -79,6 +80,8 @@ export default function CardapioSemana() {
     )
   }
   
+  const todayKey = new Date().toISOString().slice(0, 10)
+
   const menusPorDia = [...menus]
     .sort((a, b) => new Date(a?.date || 0) - new Date(b?.date || 0))
     .reduce((acc, menu) => {
@@ -115,11 +118,12 @@ export default function CardapioSemana() {
       <h1>Cardápio Semanal</h1>
       {Object.entries(menusPorDia).map(([chave, dia], index) => {
         const favorito = isFavorite(chave)
+        const isToday = chave === todayKey
 
         return (
-          <div key={`${chave}-${index}`} className="dia-semana">
+          <div key={`${chave}-${index}`} className={`dia-semana${isToday ? ' dia-hoje' : ''}`}>
             <div className="cardapio-title-row">
-              <h2>{dia.label}</h2>
+              <h2>{dia.label}{isToday ? ' • Hoje' : ''}</h2>
               <button
                 type="button"
                 className={`favorite-button${favorito ? ' is-favorite' : ''}`}
