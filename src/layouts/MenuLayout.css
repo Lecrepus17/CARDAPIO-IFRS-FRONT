@@ -184,3 +184,51 @@
 .cardapio-lista li:last-child {
   border-bottom: none;
 }
+
+.cardapio-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.cardapio-title-row h1,
+.cardapio-title-row h2 {
+  margin-bottom: 0;
+}
+
+.favorite-button {
+  min-width: 164px;
+  min-height: 40px;
+  padding: 10px 14px;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #14532d;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.favorite-button:hover {
+  background-color: #dcfce7;
+}
+
+.favorite-button.is-favorite {
+  background-color: #86efac;
+  border-color: #4ade80;
+  color: #14532d;
+}
+
+@media (max-width: 640px) {
+  .cardapio-title-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .favorite-button {
+    width: 100%;
+  }
+}

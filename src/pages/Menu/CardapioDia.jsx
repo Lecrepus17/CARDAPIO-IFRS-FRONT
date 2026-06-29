@@ -1,10 +1,21 @@
 import { useEffect, useState } from 'react'
 import api from '../../services/api'
+import { getDateKey, useFavoriteMenus } from '../../hooks/useFavoriteMenus'
+
+function criarResumoCardapio(menus) {
+  return menus.map((menu) => ({
+    id: menu?.id,
+    type: menu?.type,
+    date: menu?.date,
+    items: Array.isArray(menu?.items) ? menu.items : [],
+  }))
+}
 
 export default function CardapioDia() {
   const [menus, setMenus] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const { isFavorite, toggleFavorite } = useFavoriteMenus()
 
   useEffect(() => {
     async function carregarCardapio() {
@@ -54,9 +65,29 @@ export default function CardapioDia() {
     )
   }
 
+  const dataCardapio = menus.find((menu) => menu?.date)?.date || new Date()
+  const dateKey = getDateKey(dataCardapio)
+  const favorito = isFavorite(dateKey)
+
   return (
     <div>
-      <h1>Cardápio do Dia</h1>
+      <div className="cardapio-title-row">
+        <h1>Cardápio do Dia</h1>
+        <button
+          type="button"
+          className={`favorite-button${favorito ? ' is-favorite' : ''}`}
+          aria-pressed={favorito}
+          onClick={() =>
+            toggleFavorite({
+              dateKey,
+              label: 'Cardápio do dia',
+              menus: criarResumoCardapio(menus),
+            })
+          }
+        >
+          {favorito ? 'Remover favorito' : 'Favoritar cardápio'}
+        </button>
+      </div>
 
       {menus.map((menu, index) => {
         const titulo = menu?.type === 'JANTAR' ? 'Janta' : (menu?.type === 'ALMOCO' ? 'Almoço' : 'Café da manhã')
