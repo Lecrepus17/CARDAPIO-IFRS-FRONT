@@ -106,7 +106,7 @@ function createContent(title, lines, pageNumber) {
   const bytes = toBytes('BT\n')
   let y = PAGE_HEIGHT - MARGIN
 
-  addTextCommand(bytes, pageNumber === 1 ? title : `${title} - continuacao`, MARGIN, y, 18)
+  addTextCommand(bytes, pageNumber === 1 ? title : `${title} - Continuação`, MARGIN, y, 18)
   y -= 30
 
   lines.forEach((line) => {

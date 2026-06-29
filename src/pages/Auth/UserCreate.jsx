@@ -21,7 +21,7 @@ export default function UserCreate() {
         name,
         email,
         password,
-        role: 'ALUNO',
+        role,
       })
 
       navigate('/login')
