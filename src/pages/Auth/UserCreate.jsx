@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../../services/api'
 import logo from '../../assets/Logo-IFRS-cores-sem-fundo-Vertical.png'
 import './Auth.css'
 
@@ -16,10 +16,22 @@ export default function UserCreate() {
     setError('')
 
     try {
-      await axios.post('/api/auth/register', { name, email, password })
+      await api.post('/auth/register', {
+        name,
+        email,
+        password,
+        role: 'ALUNO',
+      })
+
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.message || 'Erro ao cadastrar')
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        'Erro ao cadastrar'
+
+      setError(message)
     }
   }
 

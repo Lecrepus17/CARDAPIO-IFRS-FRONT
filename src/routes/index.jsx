@@ -28,7 +28,7 @@ export default function AppRoutes() {
       </Route>
 
       {/* Rotas admin */}
-      <Route element={<PrivateRoute requiredRole="admin" />}>
+      <Route element={<PrivateRoute requiredRole="ADMIN" />}>
         <Route path="/admin" element={<AdminDashboard />} />
       </Route>
     </Routes>

@@ -1,9 +1,51 @@
-import { getRefeicaoAtual } from '../../mocks/cardapio'
+import { useEffect, useState } from 'react'
+import api from '../../services/api'
 
 export default function CardapioProximo() {
-  const refeicao = getRefeicaoAtual()
+  const [menu, setMenu] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  if (!refeicao) {
+  useEffect(() => {
+    async function carregarRefeicao() {
+      try {
+        const { data } = await api.get('/menus/current')
+        const resposta = data?.menu || data?.data || data
+        setMenu(resposta)
+      } catch (err) {
+        const message =
+          err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          'Erro ao carregar a próxima refeição'
+
+        setError(message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    carregarRefeicao()
+  }, [])
+
+  if (loading) {
+    return (
+      <div>
+        <h1>Próxima Refeição</h1>
+        <p>Carregando...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <h1>Próxima Refeição</h1>
+        <p>{error}</p>
+      </div>
+    )
+  }
+
+  if (!menu) {
     return (
       <div>
         <h1>Próxima Refeição</h1>
@@ -14,12 +56,15 @@ export default function CardapioProximo() {
 
   return (
     <div>
-      <h1>Próxima Refeição — {refeicao.tipo}</h1>
+      <h1>Próxima Refeição — {menu?.type === 'JANTAR' ? 'Janta' : (menu?.type === 'ALMOCO' ? 'Almoço' : 'Café da manhã')}</h1>
       <ul className="cardapio-lista">
-        <li><strong>Principal:</strong> {refeicao.principal}</li>
-        <li><strong>Acompanhamento:</strong> {refeicao.acompanhamento}</li>
-        <li><strong>Salada:</strong> {refeicao.salada}</li>
-        <li><strong>Sobremesa:</strong> {refeicao.sobremesa}</li>
+        {Array.isArray(menu?.items) && menu.items.length > 0 ? (
+          menu.items.map((item, index) => (
+            <li key={`${menu?.type || 'refeicao'}-${index}`}>{item}</li>
+          ))
+        ) : (
+          <li>Sem itens cadastrados.</li>
+        )}
       </ul>
     </div>
   )
