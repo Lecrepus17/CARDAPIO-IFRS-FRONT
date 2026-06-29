@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../services/api'
 import { getDateKey, useFavoriteMenus } from '../../hooks/useFavoriteMenus'
+import { exportCardapioPdf } from '../../utils/exportCardapioPdf'
 
 function criarResumoCardapio(menus) {
   return menus.map((menu) => ({
@@ -9,6 +10,31 @@ function criarResumoCardapio(menus) {
     date: menu?.date,
     items: Array.isArray(menu?.items) ? menu.items : [],
   }))
+}
+
+function formatarTipo(tipo) {
+  switch ((tipo || '').toUpperCase()) {
+    case 'JANTAR':
+      return 'Janta'
+    case 'ALMOCO':
+      return 'Almoço'
+    default:
+      return 'Café da manhã'
+  }
+}
+
+function criarLinhasPdf(menus, dateKey) {
+  return [
+    `Periodo: ${dateKey}`,
+    '',
+    ...menus.flatMap((menu) => [
+      formatarTipo(menu?.type),
+      ...(Array.isArray(menu?.items) && menu.items.length
+        ? menu.items.map((item) => `- ${item}`)
+        : ['- Sem itens cadastrados.']),
+      '',
+    ]),
+  ]
 }
 
 export default function CardapioDia() {
@@ -75,6 +101,19 @@ export default function CardapioDia() {
         <h1>Cardápio do Dia</h1>
         <button
           type="button"
+          className="favorite-button pdf-button"
+          onClick={() =>
+            exportCardapioPdf({
+              title: 'Cardápio do Dia',
+              fileName: `cardapio-dia-${dateKey}`,
+              lines: criarLinhasPdf(menus, dateKey),
+            })
+          }
+        >
+          Exportar PDF
+        </button>
+        <button
+          type="button"
           className={`favorite-button${favorito ? ' is-favorite' : ''}`}
           aria-pressed={favorito}
           onClick={() =>
@@ -90,7 +129,7 @@ export default function CardapioDia() {
       </div>
 
       {menus.map((menu, index) => {
-        const titulo = menu?.type === 'JANTAR' ? 'Janta' : (menu?.type === 'ALMOCO' ? 'Almoço' : 'Café da manhã')
+        const titulo = formatarTipo(menu?.type)
 
         return (
           <section key={`${menu?.id || menu?.date || titulo}-${index}`}>

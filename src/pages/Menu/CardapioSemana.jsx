@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../services/api'
 import { useFavoriteMenus } from '../../hooks/useFavoriteMenus'
+import { exportCardapioPdf } from '../../utils/exportCardapioPdf'
 
 function formatarDia(dateValue) {
   if (!dateValue) return 'Dia'
@@ -24,6 +25,23 @@ function criarFavoritoDia(dateKey, dia) {
       janta: dia.janta,
     },
   }
+}
+
+function linhasRefeicao(titulo, itens) {
+  return [
+    titulo,
+    ...(itens.length ? itens.map((item) => `- ${item}`) : ['- Sem itens cadastrados.']),
+    '',
+  ]
+}
+
+function criarLinhasPdf(menusPorDia) {
+  return Object.entries(menusPorDia).flatMap(([data, dia]) => [
+    `${dia.label} - ${data}`,
+    ...linhasRefeicao('Café da manhã', dia.cafe),
+    ...linhasRefeicao('Almoço', dia.almoco),
+    ...linhasRefeicao('Janta', dia.janta),
+  ])
 }
 
 export default function CardapioSemana() {
@@ -115,7 +133,22 @@ export default function CardapioSemana() {
 
   return (
     <div>
-      <h1>Cardápio Semanal</h1>
+      <div className="cardapio-title-row">
+        <h1>Cardápio Semanal</h1>
+        <button
+          type="button"
+          className="favorite-button pdf-button"
+          onClick={() =>
+            exportCardapioPdf({
+              title: 'Cardápio Semanal',
+              fileName: 'cardapio-semanal',
+              lines: criarLinhasPdf(menusPorDia),
+            })
+          }
+        >
+          Exportar PDF
+        </button>
+      </div>
       {Object.entries(menusPorDia).map(([chave, dia], index) => {
         const favorito = isFavorite(chave)
         const isToday = chave === todayKey
