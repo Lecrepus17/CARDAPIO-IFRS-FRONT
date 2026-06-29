@@ -8,6 +8,7 @@ export default function UserCreate() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('ALUNO')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
@@ -71,6 +72,16 @@ export default function UserCreate() {
             required
           />
         </div>
+
+        <div>
+          <label htmlFor="role">Tipo de usuário</label>
+          <select id="role" value={role} onChange={(e) => setRole(e.target.value)} required>
+            <option value="ALUNO">Aluno</option>
+            <option value="SERVIDOR">Servidor</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+
         <button type="submit">Cadastrar</button>
       </form>
       <p>

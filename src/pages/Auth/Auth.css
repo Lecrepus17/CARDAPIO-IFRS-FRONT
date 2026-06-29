@@ -40,7 +40,8 @@
   font-size: 0.875rem;
 }
 
-.auth-container form input {
+.auth-container form input,
+.auth-container form select {
   padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -48,7 +49,8 @@
   transition: border-color 0.2s;
 }
 
-.auth-container form input:focus {
+.auth-container form input:focus,
+.auth-container form select:focus {
   outline: none;
   border-color: #86efac;
   box-shadow: 0 0 0 3px rgba(134, 239, 172, 0.3);

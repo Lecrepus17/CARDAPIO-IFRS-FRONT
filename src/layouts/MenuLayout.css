@@ -163,6 +163,15 @@
   border-left: 4px solid #86efac;
 }
 
+.dia-semana.dia-hoje {
+  border-left-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.dia-semana.dia-hoje h2 {
+  color: #1d4ed8;
+}
+
 .dia-semana h3,
 .dia-semana h4 {
   margin: 8px 0 8px;
